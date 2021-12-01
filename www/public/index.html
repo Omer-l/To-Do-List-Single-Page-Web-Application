@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>eeZDoc</title>
+    <link href="styles.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./client.js"></script>
+</head>
+
+<body class="bg-info">
+        <div class="bg-info container border border-dark">
+            <h1 class="text-center">eeZDoc</h1>
+        </div>
+        <div>
+            <!-- Tasks displayed here-->
+            <div id="TaskDiv"></div>
+        </div>
+
+        <p class="text-center">
+            <!-- Form to add new task -->
+            <input type="text" id="taskInput" placeholder="Enter To-Do here"><br>
+            <button id="plusButton" class="btn-lg btn-success" >+</button>
+            <p id="AddTaskResult" class="text-center"></p>
+            <!-- Feedback from client/backend -->
+
+        </p>       
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "cw3node-master",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Omer-l/cw3node-master.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Omer-l/cw3node-master/issues"
+  },
+  "homepage": "https://github.com/Omer-l/cw3node-master#readme",
+  "dependencies": {
+    "bootstrap": "^4.6.0",
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.3.2",
+    "mysql": "^2.18.1"
+  }
+}

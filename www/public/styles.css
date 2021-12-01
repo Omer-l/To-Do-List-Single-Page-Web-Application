@@ -1,0 +1,30 @@
+/* Static stylesheet */
+h1 {
+    color: green;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+td {
+    padding: 10px
+}
+
+html {
+    background-image: url('background.jpg');
+}
+
+#addTask 
+{
+    padding-left: 40%;
+}
+
+#minusButton
+{
+    border-radius: 50%;
+}
+#plusButton
+{
+    border-radius: 50%;
+}
+
+

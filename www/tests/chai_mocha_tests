@@ -1,0 +1,161 @@
+//Database code that we are testing
+let db = require('../app');
+
+//Server code that we are testing
+let server = require ('../app')
+
+//Set up Chai library 
+let chai = require('chai');
+let should = chai.should();
+let assert = chai.assert;
+let expect = chai.expect;
+
+//Set up Chai for testing web service
+let chaiHttp = require ('chai-http');
+chai.use(chaiHttp);
+
+//Import the mysql module and create a connection pool with the user details
+const mysql = require('mysql');
+//Create a connection pool with the task details
+const connectionPool = mysql.createPool({
+    connectionLimit: 1,
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "password",
+    database: "todo",
+    debug: false
+});
+
+//Wrapper for all database tests
+describe('Database', () => {
+
+    //Mocha test for handleGetRequest method in database module.
+    describe('#handleGetRequest', () => {
+        it('should return all of the tasks in the database', (done) => {
+            //Mock response object for test
+            let response= {};
+
+            /* When there is an error response.staus(ERROR_CODE).json(ERROR_MESSAGE) is called
+               Mock object should fail test in this situation. */
+            response.status = (errorCode) => {
+                return {
+                    json: (errorMessage) => {
+                        console.log("Error code: " + errorCode + "; Error message: " + errorMessage);
+                        assert.fail("Error code: " + errorCode + "; Error message: " + errorMessage);
+                        done();
+                    }
+                }
+            };
+
+            //Add send function to mock object
+            response.send = (result) => {
+                //Convert result to JavaScript object
+                let resObj = JSON.parse(result);
+
+                //Check that an array of tasks is returned
+                resObj.should.be.a('array');
+
+                //Check that appropriate properties are returned
+                if(resObj.length > 1){
+                    resObj[0].should.have.property('id');
+                    resObj[0].should.have.property('task');
+                    resObj[0].should.have.property('dateAdded');
+                }
+
+                //End of test
+                done();
+            }
+
+            //Call function that we are testing
+            db.handleGetRequest("GET",response);
+        });
+    });
+
+    //Mocha test for handleGetRequest method in database module.
+    describe('#handlePostRequest', () => {
+        it('should add a task to the database', (done) => {
+            //Mock response object for test
+            let response= {};
+
+            /* When there is an error response.staus(ERROR_CODE).json(ERROR_MESSAGE) is called
+               Mock object should fail test in this situation. */
+            response.status = (errorCode) => {
+                return {
+                    json: (errorMessage) => {
+                        console.log("Error code: " + errorCode + "; Error message: " + errorMessage);
+                        assert.fail("Error code: " + errorCode + "; Error message: " + errorMessage);
+                        done();
+                    }
+                }
+            };
+
+            //Add send function to mock object. This checks whether function is behaving correctly
+            response.send = () => {
+                //Check that task has been added to database
+                let sql = "SELECT name FROM tasks WHERE name='" + task + "'";
+                connectionPool.query(sql, (err, result) => {
+                    if (err){//Check for errors
+                        assert.fail(err);//Fail test if this does not work.
+                        done();//End test
+                    }
+                    else{
+                        //Check that task has been added
+                        expect(result.length).to.equal(1);
+
+                        //Clean up database
+                        sql = "DELETE FROM tasks WHERE name='" + task + "'";
+                        connectionPool.query(sql, (err, result) => {
+                            if (err){//Check for errors
+                                assert.fail(err);//Fail test if this does not work.
+                                done();//End test
+                            }
+                            else{
+                                done();//End test
+                            }
+                        });
+                    }
+                });
+            };
+
+            //Create random task details
+            let task = "Go Study at the library";
+
+            //Call function to add task to database
+            db.handlePostRequest(response, task);
+        });
+    });
+});
+
+//Wrapper for all web service tests
+describe('Web Service', () => {
+
+    //Test of GET request sent to tasks/
+    describe('/GET tasks', () => {
+        it('should GET all the tasks', (done) => {
+            chai.request(server)
+                .get('/todo')
+                .end((err, response) => {
+                    //Check the status code
+                    response.should.have.status(200);
+
+                    //Convert returned JSON to JavaScript object
+                    let resObj = JSON.parse(response.text);
+
+                    //Check that an array of tasks is returned
+                    resObj.should.be.a('array');
+
+                    //Check that appropriate properties are returned
+                    if(resObj.length > 1){
+                        resObj[0].should.have.property('id');
+                        resObj[0].should.have.property('task');
+                        resObj[0].should.have.property('dateAdded');
+                    }
+
+                    //End test
+                    done();
+                });
+        });
+    });
+});
+
